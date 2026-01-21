@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kutu Branda Fiyatı</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        /* ================================
+           TEMEL DEĞİŞKENLER (LIGHT MODE)
+           ================================ */
+        :root {
+            --bg: #f2f2f7;
+            --card-bg: #ffffff;
+            --text: #111827;
+            --subtext: #6b7280;
+
+            --border-soft: #e5e7eb;
+            --border-strong: #d1d5db;
+
+            --table-header-bg: #f2f2f7;
+            --row-odd-bg: #ffffff;
+            --row-even-bg: #f4f4f5;
+
+            --input-bg: #f9fafb;
+            --input-bg-hover: #ffffff;
+            --input-border: #d1d5db;
+            --input-text: #111827;
+
+            --btn-primary-bg: #007aff;
+            --btn-primary-text: #ffffff;
+            --btn-secondary-bg: #e5e7eb;
+            --btn-secondary-text: #111827;
+
+            --warning-bg: rgba(255, 159, 10, 0.12);
+            --warning-border: rgba(255, 159, 10, 0.4);
+            --warning-text: #b45309;
+
+            --total-highlight: #007aff;
+
+            --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.08);
+            --shadow-focus: 0 0 0 3px rgba(0,122,255,0.25), 0 0 12px rgba(0,122,255,0.16);
+        }
+
+        /* ================================
+           DARK MODE (SİSTEME GÖRE OTOMATİK)
+           ================================ */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #050816;
+                --card-bg: #111827;
+                --text: #f9fafb;
+                --subtext: #9ca3af;
+
+                --border-soft: #1f2933;
+                --border-strong: #374151;
+
+                --table-header-bg: #111827;
+                --row-odd-bg: #020617;
+                --row-even-bg: #020617;
+
+                --input-bg: rgba(255,255,255,0.06);
+                --input-bg-hover: rgba(255,255,255,0.10);
+                --input-border: rgba(255,255,255,0.16);
+                --input-text: #e5e7eb;
+
+                --btn-primary-bg: #0a84ff;
+                --btn-primary-text: #ffffff;
+                --btn-secondary-bg: #1f2933;
+                --btn-secondary-text: #e5e7eb;
+
+                --warning-bg: rgba(255, 159, 10, 0.18);
+                --warning-border: rgba(255, 159, 10, 0.6);
+                --warning-text: #fbbf24;
+
+                --total-highlight: #60a5fa;
+
+                --shadow-card: 0 22px 55px rgba(0, 0, 0, 0.65);
+                --shadow-focus: 0 0 0 3px rgba(10,132,255,0.45), 0 0 16px rgba(10,132,255,0.35);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                         "Segoe UI", Roboto, Arial, sans-serif;
+            background: radial-gradient(circle at top, rgba(88,28,135,0.28), transparent 60%),
+                        var(--bg);
+            color: var(--text);
+        }
+
+        .shell {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px 18px 18px;
+            box-shadow: var(--shadow-card);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 4px 0;
+            letter-spacing: -0.02em;
+        }
+
+        p.sub {
+            text-align: center;
+            font-size: 13px;
+            color: var(--subtext);
+            margin: 0 0 12px 0;
+        }
+
+        .warning-banner {
+            margin: 8px 0 16px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--warning-text);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            margin: 4px 0 14px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 999px; /* pill */
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: transform 0.08s ease,
+                        box-shadow 0.12s ease,
+                        background-color 0.18s ease,
+                        opacity 0.12s ease;
+        }
+
+        #hesaplaBtn {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            box-shadow: 0 6px 18px rgba(0,122,255,0.35);
+        }
+
+        #hesaplaBtn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(0,122,255,0.4);
+            opacity: 0.9;
+        }
+
+        #temizleBtn {
+            background-color: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
+        }
+
+        #temizleBtn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        .uyari {
+            color: #dc2626;
+            margin: 2px 0 10px 2px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-soft);
+            background: linear-gradient(to bottom,
+                        rgba(148,163,184,0.12),
+                        rgba(15,23,42,0.1));
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 13px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-soft);
+            border-right: 1px solid var(--border-soft);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+
+        th {
+            font-weight: 700;
+            background: var(--table-header-bg);
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: var(--row-odd-bg);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: var(--row-even-bg);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            max-width: 100px;
+            padding: 8px 10px;
+            font-size: 13px;
+            border-radius: 14px;
+            border: 1px solid var(--input-border);
+            outline: none;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            transition: border-color 0.18s ease,
+                        box-shadow 0.18s ease,
+                        background-color 0.18s ease,
+                        transform 0.10s ease;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"]:hover {
+            background-color: var(--input-bg-hover);
+        }
+
+        input[type="number"]:focus {
+            border-color: #0a84ff;
+            box-shadow: var(--shadow-focus);
+            background-color: var(--input-bg-hover);
+            transform: scale(1.015);
+        }
+
+        .fiyat-hucre {
+            font-weight: 600;
+            min-width: 90px;
+        }
+
+        .toplam-alan {
+            margin-top: 12px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .toplam-alan span {
+            font-weight: 700;
+            color: var(--total-highlight);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px 8px;
+            }
+            .card {
+                padding: 16px 12px 14px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            p.sub {
+                font-size: 12px;
+            }
+            table {
+                font-size: 12px;
+            }
+            input[type="number"] {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <div class="card">
+        <h1>Kutu Branda Fiyatı</h1>
+        <p class="sub">Ölçüleri cm cinsinden girin. En ve boy hesaplamada otomatik olarak +30 cm artırılır.</p>
+
+        <div class="warning-banner">
+            LÜTFEN NET ÖLÇÜ GİRİNİZ. PAY OTOMATİK VERİLİR.
+        </div>
+
+        <div class="toolbar">
+            <button id="hesaplaBtn" type="button">Tüm Satırları Hesapla</button>
+            <button id="temizleBtn" type="button">Temizle</button>
+        </div>
+
+        <div id="uyari" class="uyari"></div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>En (cm)</th>
+                    <th>Boy (cm)</th>
+                    <th>Yükseklik (cm)</th>
+                    <th>Ölçü Fiyatı</th>
+                </tr>
+                </thead>
+                <tbody id="tabloGovde">
+                <!-- JS ile 15 satır eklenecek -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="toplam-alan">
+            Toplam Fiyat: <span id="toplamFiyat">0,00 ₺</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==============================
+    //  AYAR – SADECE SİZİN İÇİN
+    // ==============================
+    const M2_BIRIM_FIYAT = 25; // TL/m² – kendi m² fiyatınızı yazın
+    const SATIR_SAYISI = 15;
+
+    const tabloGovde = document.getElementById("tabloGovde");
+    const uyariEl = document.getElementById("uyari");
+    const toplamFiyatEl = document.getElementById("toplamFiyat");
+
+    // 15 satırı oluştur
+    for (let i = 1; i <= SATIR_SAYISI; i++) {
+        const tr = document.createElement("tr");
+
+        const tdEn = document.createElement("td");
+        const enInput = document.createElement("input");
+        enInput.type = "number";
+        enInput.min = "0";
+        enInput.step = "0.01";
+        enInput.id = "en_" + i;
+        tdEn.appendChild(enInput);
+
+        const tdBoy = document.createElement("td");
+        const boyInput = document.createElement("input");
+        boyInput.type = "number";
+        boyInput.min = "0";
+        boyInput.step = "0.01";
+        boyInput.id = "boy_" + i;
+        tdBoy.appendChild(boyInput);
+
+        const tdYuk = document.createElement("td");
+        const yukInput = document.createElement("input");
+        yukInput.type = "number";
+        yukInput.min = "0";
+        yukInput.step = "0.01";
+        yukInput.id = "yuk_" + i;
+        tdYuk.appendChild(yukInput);
+
+        const tdFiyat = document.createElement("td");
+        tdFiyat.id = "fiyat_" + i;
+        tdFiyat.className = "fiyat-hucre";
+        tdFiyat.textContent = "–";
+
+        tr.appendChild(tdEn);
+        tr.appendChild(tdBoy);
+        tr.appendChild(tdYuk);
+        tr.appendChild(tdFiyat);
+
+        tabloGovde.appendChild(tr);
+    }
+
+    function hesaplaTekSatir(enCm, boyCm, yukCm) {
+        // Tamamen boş satır ise 0 döndür
+        if (
+            (enCm === "" || isNaN(enCm)) &&
+            (boyCm === "" || isNaN(boyCm)) &&
+            (yukCm === "" || isNaN(yukCm))
+        ) {
+            return 0;
+        }
+
+        if (isNaN(enCm) || isNaN(boyCm) || isNaN(yukCm) ||
+            enCm <= 0 || boyCm <= 0 || yukCm <= 0) {
+            return null;
+        }
+
+        // En ve Boy'a +30 cm pay
+        const enCmEfektif = enCm + 30;
+        const boyCmEfektif = boyCm + 30;
+
+        // Metreye çevir
+        const enM = enCmEfektif / 100;
+        const boyM = boyCmEfektif / 100;
+        const yukM = yukCm / 100;
+
+        // Toplam m² (müşteriye gösterilmeyecek)
+        const tavanM2 = enM * boyM;
+        const etrafM2 = 2 * (enM + boyM) * yukM;
+        const toplamM2 = tavanM2 + etrafM2;
+
+        return toplamM2 * M2_BIRIM_FIYAT;
+    }
+
+    function formatTL(tutar) {
+        return new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2
+        }).format(tutar);
+    }
+
+    document.getElementById("hesaplaBtn").addEventListener("click", function () {
+        uyariEl.style.display = "none";
+        uyariEl.textContent = "";
+
+        let genelToplam = 0;
+        let hataVar = false;
+
+        for (let i = 1; i <= SATIR_SAYISI; i++) {
+            const enInput = document.getElementById("en_" + i);
+            const boyInput = document.getElementById("boy_" + i);
+            const yukInput = document.getElementById("yuk_" + i);
+            const fiyatHucre = document.getElementById("fiyat_" + i);
+
+            const enCm = parseFloat(enInput.value);
+            const boyCm = parseFloat(boyInput.value);
+            const yukCm = parseFloat(yukInput.value);
+
+            const satirFiyat = hesaplaTekSatir(enCm, boyCm, yukCm);
+
+            if (satirFiyat === null) {
+                fiyatHucre.textContent = "Hatalı";
+                hataVar = true;
+            } else if (satirFiyat === 0) {
+                fiyatHucre.textContent = "–";
+            } else {
+                fiyatHucre.textContent = formatTL(satirFiyat);
+                genelToplam += satirFiyat;
+            }
+        }
+
+        if (hataVar) {
+            uyariEl.textContent = "Dolu olan satırlarda En, Boy ve Yüksekliği 0'dan büyük sayılar olarak giriniz.";
+            uyariEl.style.display = "block";
+        }
+
+        toplamFiyatEl.textContent = formatTL(genelToplam);
+    });
+
+    document.getElementById("temizleBtn").addEventListener("click", function () {
+        uyariEl.style.display = "none";
+        uyariEl.textContent = "";
+
+        for (let i = 1; i <= SATIR_SAYISI; i++) {
+            document.getElementById("en_" + i).value = "";
+            document.getElementById("boy_" + i).value = "";
+            document.getElementById("yuk_" + i).value = "";
+            document.getElementById("fiyat_" + i).textContent = "–";
+        }
+
+        toplamFiyatEl.textContent = "0,00 ₺";
+    });
+</script>
+</body>
+</html>
